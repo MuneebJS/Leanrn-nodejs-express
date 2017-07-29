@@ -1,54 +1,41 @@
-// var express = require('express');
-// var app = express();
-// var things = require('./things.js');
-
-
-// // app.use(function (req, res, next) {
-// //   console.log('Time:', Date.now())
-// //   next()
-// // })
-
-// // app.get( (req, res, next) => {
-// //     console.log('request type' , req.method)
-// //     next();
-// // })
-
-// app.get('/', function(req, res){
-//    res.send("<a href='hello'></a>");
-//    res.end("<a href='hello'></a>");
-   
-// });
-
-
-
-// app.listen(3000);
-
-
 var express = require('express');
-var app = express();
 var bodyParser = require('body-parser');
+var multer = require('multer');
+var upload = multer();
+var app = express();
 
-//To parse URL encoded data
-app.use(bodyParser.urlencoded({ extended: false }))
+app.get('/', function(req, res){
+   res.render('form');
+});
 
-app.use( (req, res, next) => {
-    console.log(req)
-    next();
-})
+app.set('view engine', 'pug');
+app.set('views', './views');
 
-app.use(bodyParser.json())
+// for parsing application/json
+app.use(bodyParser.json()); 
 
-app.get('/', (req, res, next) => {
-    res.send(req.route);
-    // console.log(req)
-    next();
-})
+// for parsing application/xwww-
+app.use(bodyParser.urlencoded({ extended: true })); 
+// form-urlencoded
 
-app.use((req, res, next) => {
-    console.log('end');
-    next();
-})
+// for parsing multipart/form-data
+app.use(upload.array()); 
+app.use(express.static('public'));
 
+app.post('/', function(req, res){
+   console.log(req.body.say);
+   res.send(req.body.first_name + "  " + req.body.last_name + "your password : " + req.body.password)
+   res.send("recieved your request!");
+});
+app.get('/first_template', function(req, res){
+   res.render('form');
+});
 
-
-app.listen(3000);
+app.listen(3000, (err) => {
+    if(err) {
+        console.log(err)
+    }
+    else {
+        console.log('port lisetened')
+    }
+});
